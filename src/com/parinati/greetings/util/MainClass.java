@@ -1,60 +1,69 @@
 package com.parinati.greetings.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Properties;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.log4j.Logger;
 
 import com.parinati.greetings.entity.Message;
 import com.parinati.greetings.entity.Receipients;
 import com.parinati.greetings.service.SaveDraft;
 
 public class MainClass {
+	private static final Logger logger = Logger.getLogger(MainClass.class);
 
 	public static void main(String[] args) {
+		logger.info("Mails Start");
+		ReadProperties readProperties = new ReadProperties();
+		Properties prop = readProperties.readProperties();
+		String filePath = prop.getProperty("filePath");
+		String senderEmail = prop.getProperty("senderEmail");
+		String senderPassword = prop.getProperty("senderPassword");
 		Message msgObj = new Message();
-		HashMap<Integer, Receipients> recptMap = new HashMap<Integer, Receipients>();
-		List<Receipients> recptObj = new ArrayList<Receipients>();
 		SaveDraft saveDraftObj = new SaveDraft();
-		xlsReader read = new xlsReader(
-				"F:\\Jspiders\\eclipse_progs\\JavaMail\\tester\\resources\\GreetingsApplication.xlsx");
+		xlsReader read = new xlsReader(filePath);
+		// "D:\\KBWorkspace\\JavaMail\\greeting-app\\src\\resources\\GreetingsApplication.xlsx");
 		msgObj.setMessage(read.getData(0, 0, 1));
 		msgObj.setSubject(read.getData(0, 1, 1));
+		msgObj.setSignature(read.getData(0, 2, 1));
 
-		Sheet sheet = read.wb.getSheetAt(0);
-		int rowCount = read.getRowCount("Sheet1");
-		for (int rownum = 6; rownum < rowCount + 1; rownum++) {
-			Row row = sheet.getRow(rownum);
-			int colnum = 0;
-			while (colnum < row.getLastCellNum()) {
-
-				// TODO:
-
-				// recptObj.read.getData(0, rownum, colnum);
-				colnum++;
-			}
-			System.out.print(row.getCell(colnum).getStringCellValue());
-
-		}
-
+		Receipients recptObj = null;
 		try {
-			Session session = saveDraftObj.connect("xyz@gmail.com", "password");
-			MimeMessage draftMessage = new MimeMessage(session);
+			Session session = saveDraftObj.connect(senderEmail, senderPassword);
 
-			draftMessage.setSubject(msgObj.getSubject());
-			draftMessage.setContent("Dear <br / >" + msgObj.getMessage(), "text/html");
+			int rownum = 4;
+			while (true) {
+				try {
+					recptObj = new Receipients();
+					recptObj.setRecptName(read.getData(0, rownum, 1));
+					recptObj.setRecptTitle(read.getData(0, rownum, 2));
+					recptObj.setRecptEmail(read.getData(0, rownum, 3));
+					MimeMessage draftMessage = new MimeMessage(session);
+					String to = recptObj.getRecptEmail();
+					InternetAddress[] address = InternetAddress.parse(to, true);
+					draftMessage = new MimeMessage(session);
+					draftMessage.setRecipients(javax.mail.Message.RecipientType.TO, address);
+					draftMessage.setSubject(msgObj.getSubject());
+					draftMessage.setContent("Dear " + recptObj.getRecptTitle() + " " + recptObj.getRecptName()
+							+ " <br / >" + msgObj.getMessage() + " <br / >" + msgObj.getSignature(), "text/html");
+					saveDraftObj.saveDraftMessage(draftMessage, session, senderEmail, senderPassword);
+					logger.info("Mails Sent To : " + to);
+					rownum++;
 
-			saveDraftObj.saveDraftMessage(draftMessage, session);
+				} catch (NullPointerException e) {
+					logger.info("Mails Saved");
+					break;
+
+				}
+
+			}
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }
