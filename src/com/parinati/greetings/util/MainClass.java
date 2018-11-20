@@ -1,6 +1,6 @@
 package com.parinati.greetings.util;
 
-import java.util.Properties;
+import java.util.HashMap;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -19,21 +19,19 @@ public class MainClass {
 	public static void main(String[] args) {
 		logger.info("Mails Start");
 		ReadProperties readProperties = new ReadProperties();
-		Properties prop = readProperties.readProperties();
-		String filePath = prop.getProperty("filePath");
-		String senderEmail = prop.getProperty("senderEmail");
-		String senderPassword = prop.getProperty("senderPassword");
+		HashMap<String, String> mailProperties = (HashMap<String, String>) readProperties.readProperties();
+
 		Message msgObj = new Message();
 		SaveDraft saveDraftObj = new SaveDraft();
-		xlsReader read = new xlsReader(filePath);
-		// "D:\\KBWorkspace\\JavaMail\\greeting-app\\src\\resources\\GreetingsApplication.xlsx");
+		xlsReader read = new xlsReader(mailProperties.get("filePath"));
 		msgObj.setMessage(read.getData(0, 0, 1));
 		msgObj.setSubject(read.getData(0, 1, 1));
 		msgObj.setSignature(read.getData(0, 2, 1));
 
 		Receipients recptObj = null;
 		try {
-			Session session = saveDraftObj.connect(senderEmail, senderPassword);
+			Session session = saveDraftObj.connect(mailProperties.get("senderEmail"),
+					mailProperties.get("senderPassword"));
 
 			int rownum = 4;
 			while (true) {
@@ -50,8 +48,8 @@ public class MainClass {
 					draftMessage.setSubject(msgObj.getSubject());
 					draftMessage.setContent("Dear " + recptObj.getRecptTitle() + " " + recptObj.getRecptName()
 							+ " <br / >" + msgObj.getMessage() + " <br / >" + msgObj.getSignature(), "text/html");
-					saveDraftObj.saveDraftMessage(draftMessage, session, senderEmail, senderPassword);
-					logger.info("Mails Sent To : " + to);
+					saveDraftObj.saveDraftMessage(draftMessage, session, mailProperties);
+					logger.info("Mails created for : " + to);
 					rownum++;
 
 				} catch (NullPointerException e) {

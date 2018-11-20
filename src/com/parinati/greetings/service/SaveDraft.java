@@ -1,5 +1,6 @@
 package com.parinati.greetings.service;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 import javax.mail.Flags.Flag;
@@ -26,11 +27,13 @@ public class SaveDraft {
 		return session;
 	}
 
-	public void saveDraftMessage(MimeMessage draftMessage, Session session,String senderEmail,String senderPassword) throws MessagingException {
+	public void saveDraftMessage(MimeMessage draftMessage, Session session,HashMap<String,String>  mailProperties) throws MessagingException {
 		try {
+			
 			Store imapsStore = session.getStore("imaps");
-			imapsStore.connect("imap.gmail.com", senderEmail, senderPassword);
-			Folder draftsMailBoxFolder = imapsStore.getFolder("[Gmail]/Drafts");// [Gmail]/Drafts
+			imapsStore.connect(mailProperties.get("mailProtocol"), mailProperties.get("senderEmail"),
+					mailProperties.get("senderPassword"));
+			Folder draftsMailBoxFolder = imapsStore.getFolder(mailProperties.get("draftFolder"));// [Gmail]/Drafts
 			draftsMailBoxFolder.open(Folder.READ_WRITE);
 			draftMessage.setFlag(Flag.DRAFT, true);
 			MimeMessage draftMessages[] = { draftMessage };
