@@ -14,9 +14,11 @@ Note: Kindly give "\\" in your path
 
 3.Set the password.
 
+4.Set your Mail Protocol Preferably IMAP [IMPT]
+
 4.Save the Config file.
 
-Now Run the "RunGreetings.bat" file. 
+Now Run the "RunGreetings.bat" file. (For windows User)
 
 For Linux Users:
 Run the "RunGreetings.sh" file instead.
