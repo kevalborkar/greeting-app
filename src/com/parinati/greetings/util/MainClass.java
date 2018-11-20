@@ -60,8 +60,10 @@ public class MainClass {
 				}
 
 			}
+			System.out.println("Messages Saved in Draft Folder..");
 		} catch (MessagingException e) {
 			e.printStackTrace();
+			
 		}
 	}
 

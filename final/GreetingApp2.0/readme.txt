@@ -20,7 +20,7 @@ Note: Kindly give "\\" in your path
 
 Now Run the "RunGreetings.bat" file. (For windows User)
 
-For Linux Users:
+For Linux/MAC Users:
 Run the "RunGreetings.sh" file instead.
 
 Make sure you make the .sh file as executable.
@@ -29,6 +29,8 @@ To do that right click on the file go to Properties then to the Permissions Tab.
 
 Check the draft Folder of your Mail account.
 
+If your are using Gmail, Google might block your access because of Less secure app issues, Make sure you turn on it by logging into your Google Account settings from the browser.
+ 
 Thanks!
 
 
