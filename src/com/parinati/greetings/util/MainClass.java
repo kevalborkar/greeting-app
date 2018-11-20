@@ -47,7 +47,8 @@ public class MainClass {
 					draftMessage.setRecipients(javax.mail.Message.RecipientType.TO, address);
 					draftMessage.setSubject(msgObj.getSubject());
 					draftMessage.setContent("Dear " + recptObj.getRecptTitle() + " " + recptObj.getRecptName()
-							+ " <br / >" + msgObj.getMessage() + " <br / >" + msgObj.getSignature(), "text/html");
+							+ " <br / ><br / >" + msgObj.getMessage() + "<br />  <br /> Thanks and Regards. <br /><br /> " + msgObj.getSignature(), "text/html");
+					
 					saveDraftObj.saveDraftMessage(draftMessage, session, mailProperties);
 					logger.info("Mails created for : " + to);
 					rownum++;
