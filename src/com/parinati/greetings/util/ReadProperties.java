@@ -29,6 +29,8 @@ public class ReadProperties {
 			mailProperties.put("senderPassword", prop.getProperty("senderPassword"));
 			mailProperties.put("mailProtocol", prop.getProperty("mailProtocol"));
 			mailProperties.put("draftFolder", prop.getProperty("draftFolder"));
+			mailProperties.put("fontFamily", prop.getProperty("fontFamily"));
+			mailProperties.put("fontSize", prop.getProperty("fontSize"));
 
 		} catch (IOException ex) {
 			ex.printStackTrace();

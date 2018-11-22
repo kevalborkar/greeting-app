@@ -46,8 +46,19 @@ public class MainClass {
 					draftMessage = new MimeMessage(session);
 					draftMessage.setRecipients(javax.mail.Message.RecipientType.TO, address);
 					draftMessage.setSubject(msgObj.getSubject());
-					draftMessage.setContent("Dear " + recptObj.getRecptTitle() + " " + recptObj.getRecptName()
-							+ " <br / ><br / >" + msgObj.getMessage() + "<br />  <br /> Thanks and Regards. <br /><br /> " + msgObj.getSignature(), "text/html");
+					String fontFamily = mailProperties.get("fontFamily")!=null && mailProperties.get("fontFamily").length()>0?mailProperties.get("fontFamily"):"georgia";
+					String fontSize = mailProperties.get("fontSize")!=null && mailProperties.get("fontSize").length()>0?mailProperties.get("fontSize"):"12";
+					String message="";
+					message+="<html>"
+							+"<body >"
+								+"<p style='"+"font-family:"+fontFamily+"; font-size:"+fontSize+"px;'>"
+								+ "Dear " + recptObj.getRecptTitle() + " " + recptObj.getRecptName()+","
+								+ "<br /><br />" + msgObj.getMessage() 
+								+ "<br /><br />" + msgObj.getSignature()
+								+ "</p>"
+							+ "</body >"
+							+ "</html>";
+					draftMessage.setContent(message, "text/html");
 					
 					saveDraftObj.saveDraftMessage(draftMessage, session, mailProperties);
 					logger.info("Mails created for : " + to);

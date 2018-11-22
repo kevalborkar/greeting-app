@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -38,8 +39,18 @@ public class xlsReader {
 	}
 
 	public String getData(int sheetnum, int rownum, int colnum) {
-		String data = wb.getSheetAt(sheetnum).getRow(rownum).getCell(colnum).getStringCellValue(); // read data from
-																									// rownum and colnum
+		String data = "";
+		Cell cellData = wb.getSheetAt(sheetnum).getRow(rownum).getCell(colnum);
+		switch (cellData.getCellType()) {
+		case Cell.CELL_TYPE_BLANK:
+			data = "";
+			break;
+		case Cell.CELL_TYPE_STRING:
+			
+			//data = String .format("%s", cellData.getRichStringCellValue());
+			data = cellData.getStringCellValue();
+			break;
+		}
 		return data; // return cell data
 	}
 
